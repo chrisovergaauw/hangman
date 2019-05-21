@@ -2,15 +2,33 @@ from app import db
 from flask_login import UserMixin
 from app import login
 from werkzeug.security import generate_password_hash, check_password_hash
+from app.main.util import generate_random_solution
+import uuid
+from datetime import datetime
 
 
 class Hangman(db.Model):
-    token = db.Column(db.String(16), primary_key=True)
+    token = db.Column(db.String(16), primary_key=True, default=str(uuid.uuid4()))
     finished = db.Column(db.Boolean, default=False)
-    solution = db.Column(db.String(64))
-    correct_guesses = db.Column(db.String(32))
-    incorrect_guesses = db.Column(db.String(32))
+    solution = db.Column(db.String(64), default=generate_random_solution())
+    correct_guesses = db.Column(db.String(32), default='')
+    incorrect_guesses = db.Column(db.String(32), default='')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    ts_created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+    def get_word(self):
+        word = ''
+        for char in self.solution:
+            word += '_' if char not in self.correct_guesses else char
+        return word
+
+    def guess(self, guess):
+        if guess in self.solution:
+            self.correct_guesses += guess
+            return True
+        else:
+            self.incorrect_guesses += guess
+            return False
 
     def __repr__(self):
       return """ \
@@ -43,3 +61,6 @@ class User(UserMixin, db.Model):
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+
+
