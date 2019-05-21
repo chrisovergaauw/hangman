@@ -14,7 +14,7 @@ def index():
     return render_template('index.html', title='Home', user=user)
 
 
-@bp.route('/hangman', methods=['POST', 'GET'])
+@bp.route('/hangman', methods=['POST'])
 @login_required
 def create_new_hangman_game():
     hangman = Hangman(user_id=current_user.id)
@@ -35,4 +35,14 @@ def update_hangman_game():
         correct = hangman.guess(guess)
         db.session.commit()
     return '{ hangman: %s, token: %s correct: %s}' % (hangman.get_word(), hangman.token, correct)
+
+
+@bp.route('/hangman/token/<token>', methods=['GET'])
+@login_required
+def get_hangman_solution(token):
+    hangman = Hangman.query.get(token)
+    if hangman is not None:
+        return '{ solution: %s, token: %s }' % (hangman.solution, hangman.token)
+    else:
+        return Response(status=404)
 
