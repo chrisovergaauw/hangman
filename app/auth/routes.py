@@ -10,7 +10,7 @@ from app.main.models import User
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(url_for('client.index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
@@ -18,20 +18,20 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
-        return redirect(url_for('main.index'))
+        return redirect(url_for('client.index'))
     return render_template('auth/login.html', title='Sign In', form=form)
 
 
 @bp.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('main.index'))
+    return redirect(url_for('client.index'))
 
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(url_for('client.index'))
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)

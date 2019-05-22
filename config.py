@@ -7,3 +7,4 @@ class Config(object):
         'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
+    SERVER_NAME = 'dev.localhost:5000'

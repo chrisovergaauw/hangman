@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block header %}
+    <script type="text/javascript">
+      {% include "client/jquery.js" %}
+    </script>
+    <script type="text/javascript">
+      {% include "client/script.js" %}
+    </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+{% endblock %}
+
+{% block content %}
+    <h1>Logged in as: {{ user.username }}!</h1>
+
+    <div id="container">
+        <canvas id="hangman-game" width="400" height="500"></canvas>
+
+        <div class="board">
+            <div class="hangman-word"> </div>
+            <div class="definition"></div>
+
+            <div class="console">
+                <input type="hidden" class="token"> </input>
+                <input type="text" maxlength=1 class="letter"> </input>
+                <button id="guess">Guess</button>
+                <br/>
+                <br/>
+            </div>
+            <div class="attempts"></div>
+            <button id="new-game">Start a new game</button>
+        </div>
+    </div>
+{% endblock %}

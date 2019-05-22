@@ -8,18 +8,26 @@ from datetime import datetime
 
 
 class Hangman(db.Model):
-    token = db.Column(db.String(16), primary_key=True, default=str(uuid.uuid4()))
+    token = db.Column(db.String(16), primary_key=True)
     finished = db.Column(db.Boolean, default=False)
-    solution = db.Column(db.String(64), default=generate_random_solution())
+    solution = db.Column(db.String(64))
     correct_guesses = db.Column(db.String(32), default='')
     incorrect_guesses = db.Column(db.String(32), default='')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     ts_created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
+    def __init__(self, user_id):
+        self.token = str(uuid.uuid4())
+        self.solution = generate_random_solution()
+        self.user_id = user_id
+
     def get_word(self):
         word = ''
         for char in self.solution:
             word += '_' if char not in self.correct_guesses else char
+
+        if word == self.solution:
+            self.finished = True
         return word
 
     def guess(self, guess):

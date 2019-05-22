@@ -5,10 +5,9 @@
     {% else %}
     <title>Welcome to Hangman</title>
     {% endif %}
+    {% block header %}{% endblock %}
 </head>
 <body>
-<div>Hangman: <a href="/index">Home</a></div>
-<hr>
 {% block content %}{% endblock %}
 </body>
 </html>
