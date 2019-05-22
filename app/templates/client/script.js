@@ -37,6 +37,7 @@ function guess(token, letter) {
       if (data.hangman.indexOf("_") == -1) {
         getWordDefinition(data.hangman);
         $('.console').hide();
+        updateScoreBoard();
       }
     }
     cssClass = data.correct ? 'correct' : 'wrong';
@@ -65,6 +66,7 @@ function getSolution(token) {
       } else {
         if (hangman_word.indexOf("_") == -1) {
           $('.console').hide();
+          updateScoreBoard();
         }
       }
     }
@@ -113,6 +115,22 @@ function getWordDefinition(word) {
     $('.definition').text("");
     console.log("Unable to retrieve word definition from http://api.wordnik.com:80.");
   });
+}
+
+function getScoreBoard() {
+  $.ajax({
+    type: "GET",
+    dataType: 'json',
+    url: "/hangman/games",
+  }).done(function(data) {
+    console.log(data);
+    //updateScoreBoard(data);
+  })
+}
+
+function updateScoreBoard() {
+  let score = $('.hangman-word').text().length - $('.attempts').length;
+  $("#scoreboardList").append( '<li>' + score + ' point(s)</li>' );
 }
 
 function hang(context) {
@@ -291,4 +309,6 @@ $(document).ready(function(){
       }
     }
   });
+
+  getScoreBoard();
 });

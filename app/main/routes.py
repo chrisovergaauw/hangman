@@ -1,6 +1,5 @@
 from flask import render_template, request, Response, jsonify
 
-
 from flask_login import login_required, current_user
 from app import csrf
 from app.main import bp
@@ -17,7 +16,6 @@ def create_new_hangman_game():
     return jsonify(hangman=hangman.get_word(), token=hangman.token)
 
 
-
 @bp.route('/hangman', methods=['PUT'])
 @login_required
 @csrf.exempt
@@ -27,7 +25,7 @@ def update_hangman_game():
         guess = request.get_json()['letter']
         token = request.get_json()['token']
         hangman = Hangman.query.get(token)
-        if guess in hangman.correct_guesses+hangman.incorrect_guesses:
+        if guess in hangman.correct_guesses + hangman.incorrect_guesses:
             return Response(status=304)
         correct = hangman.guess(guess)
         db.session.commit()
@@ -44,3 +42,14 @@ def get_hangman_solution():
     else:
         return Response(status=404)
 
+
+@bp.route('/hangman/games', methods=['GET'])
+@login_required
+def get_hangman_scores():
+    games_played = db.session.query(Hangman) \
+        .filter(Hangman.user_id == current_user.id) \
+        .filter(Hangman.finished).all()
+    # TODO: make hangman serializable
+    # response = jsonify(games=games_played if games_played is not None else [])
+    response = []
+    return jsonify(response)
